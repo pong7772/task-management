@@ -23,7 +23,7 @@ export class TasksController {
 
   @Put('update/:id')
   updateTask(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return 'Update a task';
+    return this.tasksService.updateTask(+id, updateTaskDto);
   }
 
   @Get('delete/:id')
