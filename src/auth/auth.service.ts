@@ -5,11 +5,13 @@ import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 export class AuthService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private jwtService: JwtService,
   ) {}
   async create(createAuthDto: CreateAuthDto) {
     console.log(createAuthDto);
@@ -33,22 +35,32 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException('Password is incorrect');
     }
+    const payload = { username: user.username, sub: user.id };
+    const accessToken: string = await this.jwtService.sign(payload);
+    return { accessToken, user };
+  }
+
+  async findAll() {
+    const user = await this.userRepository.find();
     return user;
   }
 
-  findAll() {
-    return `This action returns all auth`;
-  }
-
   findOne(id: number) {
-    return `This action returns a #${id} auth`;
+    const user = this.userRepository.findOne({ where: { id } });
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+    return user;
   }
 
   update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
+    const user = this.findOne(id);
+    const newUser = { ...user, ...updateAuthDto };
+    const updatedUser = this.userRepository.save(newUser);
+    return updatedUser;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+  async remove(id: number) {
+    await this.userRepository.delete(id);
   }
 }
