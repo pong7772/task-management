@@ -16,9 +16,10 @@ import { UpdateTaskDto } from './dto/updateTaskDto';
 import { TaskFilterDto } from './dto/taskFilterDto';
 import { AuthGuard } from '@nestjs/passport';
 import { ApiExceptionFilter } from 'src/common/api-exception.filter';
+import { AuthenticationGuard } from 'src/guards/authentication.guards';
 
 @Controller('tasks')
-@UseFilters(ApiExceptionFilter)
+// @UseFilters(ApiExceptionFilter)
 @UseGuards(AuthGuard())
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}

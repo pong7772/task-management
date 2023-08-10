@@ -6,15 +6,16 @@ import { User } from 'src/entities/user.entity';
 import { PassportModule } from '@nestjs/passport';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import k from 'src/k';
 @Module({
   imports: [
     PassportModule.register({
       defaultStrategy: 'jwt',
     }),
     JwtModule.register({
-      secret: 'topsecret',
+      secret: k.SECRET_KEY,
       signOptions: {
-        expiresIn: 3600,
+        expiresIn: 33600,
       },
     }),
     TypeOrmModule.forFeature([User]),
