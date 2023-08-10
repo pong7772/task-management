@@ -1,22 +1,36 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseFilters,
+  UseGuards,
+} from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/createTaskDto';
 import { UpdateTaskDto } from './dto/updateTaskDto';
 import { TaskFilterDto } from './dto/taskFilterDto';
-import { Task } from 'src/entities/task.entity';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiExceptionFilter } from 'src/common/api-exception.filter';
 
 @Controller('tasks')
+@UseFilters(ApiExceptionFilter)
+@UseGuards(AuthGuard())
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Get(':id')
   getTaskById(@Param('id') id: string) {
+    // throw new BadRequestException('not found task');
     return this.tasksService.getTaskById(+id);
   }
 
   @Post('create')
   createTask(@Body() createTaskDto: CreateTaskDto) {
-    console.log(createTaskDto);
     return this.tasksService.createTask(createTaskDto);
   }
 

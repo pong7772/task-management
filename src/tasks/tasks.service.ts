@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Task } from 'src/entities/task.entity';
@@ -17,7 +17,11 @@ export class TasksService {
   }
 
   async getTaskById(id: number): Promise<Task> {
-    return await this.taskRepository.findOne({ where: { id: id } });
+    const find = await this.taskRepository.findOne({ where: { id: id } });
+    if (!find) {
+      throw new BadRequestException('not found task');
+    }
+    return find;
   }
 
   async createTask(createTaskDto: CreateTaskDto): Promise<Task> {

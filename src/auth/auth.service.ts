@@ -37,7 +37,13 @@ export class AuthService {
     }
     const payload = { username: user.username, sub: user.id };
     const accessToken: string = await this.jwtService.sign(payload);
-    return { accessToken, user };
+    return {
+      accessToken,
+      user: {
+        id: user.id,
+        username: user.username,
+      },
+    };
   }
 
   async findAll() {
